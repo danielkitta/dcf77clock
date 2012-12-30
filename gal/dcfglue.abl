@@ -1,0 +1,70 @@
+module dcfglue;
+title 'DCF77 Clock Glue Logic';
+
+declarations
+    dcfglue device 'P16V8';
+
+    " Inputs
+    A0      pin 8;
+    A2      pin 4;
+    A3      pin 3;
+    A4      pin 2;
+    A5      pin 5;
+    A6      pin 6;
+    A7      pin 9;
+    A15     pin 7;
+    !MREQ   pin 1;
+    !IORQ   pin 11;
+    !RD     pin 19;
+    !WR     pin 18;
+
+    " Outputs
+    !ROMOE  pin 17 istype 'com';
+    !RAMCE  pin 14 istype 'com';
+    !RAMOE  pin 16 istype 'com';
+    !RAMWE  pin 15 istype 'com';
+    !CTCCE  pin 13 istype 'com';
+    LCDE    pin 12 istype 'com';
+
+equations
+    ROMOE = !A15 & MREQ & RD & !WR;
+
+    RAMCE = A15;
+    RAMOE = A15 & MREQ & RD;
+    RAMWE = A15 & MREQ & WR;
+
+    CTCCE = ([A7..A2] == 4);
+    LCDE  = ([A7..A2] == 8) & IORQ & ((!A0 & WR & !RD) # (A0 & RD & !WR));
+
+test_vectors
+    ([A7..A2, A0, !IORQ, !RD, !WR] -> [!CTCCE, LCDE])
+        [ 0 , 0 , 0 , 1 , 0 , 0 ,.X.,.X.,.X.,.X.] -> [0, 0];
+        [ 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 1 , 0 ] -> [1, 1];
+        [ 0 , 0 , 1 , 0 , 0 , 0 , 1 , 0 , 0 , 1 ] -> [1, 1];
+        [.X.,.X., 1 , 0 ,.X.,.X.,.X., 1 ,.X.,.X.] -> [1, 0];
+        [.X.,.X., 1 , 0 ,.X.,.X.,.X.,.X., 1 , 1 ] -> [1, 0];
+        [ 1 ,.X., 1 , 0 ,.X.,.X.,.X.,.X.,.X.,.X.] -> [1, 0];
+        [.X., 1 , 1 , 0 ,.X.,.X.,.X.,.X.,.X.,.X.] -> [1, 0];
+        [.X.,.X., 1 , 0 , 1 ,.X.,.X.,.X.,.X.,.X.] -> [1, 0];
+        [.X.,.X., 1 , 0 ,.X., 1 ,.X.,.X.,.X.,.X.] -> [1, 0];
+
+test_vectors
+    ([A15, !MREQ, !RD, !WR] -> [!ROMOE, !RAMCE, !RAMOE, !RAMWE])
+        [0, 0, 0, 0] -> [.X., 1 , 1 , 1 ];
+        [0, 0, 0, 1] -> [ 0 , 1 , 1 , 1 ];
+        [0, 0, 1, 0] -> [ 1 , 1 , 1 , 1 ];
+        [0, 0, 1, 1] -> [ 1 , 1 , 1 , 1 ];
+        [0, 1, 0, 0] -> [ 1 , 1 , 1 , 1 ];
+        [0, 1, 0, 1] -> [ 1 , 1 , 1 , 1 ];
+        [0, 1, 1, 0] -> [ 1 , 1 , 1 , 1 ];
+        [0, 1, 1, 1] -> [ 1 , 1 , 1 , 1 ];
+        [1, 0, 0, 0] -> [ 1 , 0 ,.X.,.X.];
+        [1, 0, 0, 1] -> [ 1 , 0 , 0 , 1 ];
+        [1, 0, 1, 0] -> [ 1 , 0 , 1 , 0 ];
+        [1, 0, 1, 1] -> [ 1 , 0 , 1 , 1 ];
+        [1, 1, 0, 0] -> [ 1 , 0 , 1 , 1 ];
+        [1, 1, 0, 1] -> [ 1 , 0 , 1 , 1 ];
+        [1, 1, 1, 0] -> [ 1 , 0 , 1 , 1 ];
+        [1, 1, 1, 1] -> [ 1 , 0 , 1 , 1 ];
+
+end dcfglue;
