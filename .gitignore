@@ -1,0 +1,15 @@
+/asm/dcfclock.bin
+/gal/ABELOPT.MNU
+/gal/*.AOP
+/gal/*.DMC
+/gal/*.DOC
+/gal/*.EQ[123]
+/gal/*.FIT
+/gal/*.JED
+/gal/*.LST
+/gal/*.SAV
+/gal/*.SEL
+/gal/*.SIM
+/gal/*.SM[123]
+/gal/*.TMV
+/gal/*.TT[123]
