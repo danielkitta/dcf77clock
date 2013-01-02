@@ -177,7 +177,7 @@ ctc2int:        push    af                      ; not using shadow registers:
                 ld      (BITNOW), a
                 sbc     hl, de
                 or      h                       ; delta >= 256?
-                jr      nz, .minutemark         ; yes: minute marker
+                jp      nz, .minutemark         ; yes: minute marker
 
                 ld      a, .PULSEGAP_MIN-1
                 cp      l                       ; minimum pause time met?
