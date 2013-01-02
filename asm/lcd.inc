@@ -57,8 +57,8 @@ writelcdtable4: add     a, a                    ; quadruple index
 ;
 writelcdtext:   ld      c, LCDDW
 .writetextloop: in      a, (LCDCR)              ; read busy flag
-                and     a
-                jp      m, .writetextloop       ; loop as long bit 7 is set
+                rlca
+                jr      c, .writetextloop       ; loop as long bit 7 is set
                 outi                            ; out (c), (hl++); --b
                 ret     z                       ; return if b=0
                 jp      .writetextloop          ; otherwise repeat
@@ -69,8 +69,8 @@ writelcdtext:   ld      c, LCDDW
 ; Scratch: af
 ;
 writelcdctrl:   in      a, (LCDCR)              ; read busy flag
-                and     a
-                jp      m, writelcdctrl         ; loop as long bit 7 is set
+                rlca
+                jr      c, writelcdctrl         ; loop as long bit 7 is set
                 ld      a, c
                 out     (LCDCW), a              ; output control word
                 ret
@@ -114,8 +114,8 @@ writelcdbcd:    ld      b, a                    ; save argument
 ; Scratch: af
 ;
 writelcddata:   in      a, (LCDCR)              ; read busy flag
-                and     a
-                jp      m, writelcddata         ; loop as long bit 7 is set
+                rlca
+                jr      c, writelcddata         ; loop as long bit 7 is set
                 ld      a, c
                 out     (LCDDW), a              ; output data byte
                 ret
