@@ -33,7 +33,7 @@ resetlcd:       ld      a, .LCD_8BIT            ; dummy 2nd nibble of possibly
                 ld      b, LCDCGDATALEN         ; follow up with special
                 call    writelcdtext            ; character graphics data
 
-                ld      c, LCDROW1+0            ; cursor home
+                ld      c, LCDPOSSTAT           ; set cursor
                 call    writelcdctrl
                 ld      c, BITPULSE             ; show radio antenna symbol
                 jp      writelcddata
@@ -59,7 +59,7 @@ writelcdtext:   ld      c, LCDDW
 .writetextloop: in      a, (LCDCR)              ; read busy flag
                 and     a
                 jp      m, .writetextloop       ; loop as long bit 7 is set
-                outi                            ; output (hl), ++hl, --b
+                outi                            ; out (c), (hl++); --b
                 ret     z                       ; return if b=0
                 jp      .writetextloop          ; otherwise repeat
 
@@ -74,6 +74,22 @@ writelcdctrl:   in      a, (LCDCR)              ; read busy flag
                 ld      a, c
                 out     (LCDCW), a              ; output control word
                 ret
+
+; Write a 2-digit packed BCD number to the LCD data register,
+; while suppressing a possibly leading zero digit.
+; Input  : a
+; Output : -
+; Scratch: af, bc
+;
+writelcdbcdslz: cp      10h                     ; BCD number below 10?
+                jr      nc, writelcdbcd         ; no: normal BCD output
+
+                or      '0'                     ; digit to ASCII
+                ld      b, a                    ; save argument
+                ld      c, ' '
+                call    writelcddata            ; write space
+                ld      c, b
+                jp      writelcddata            ; write second digit
 
 ; Write a 2-digit packed BCD number to the LCD data register.
 ; Input  : a

@@ -30,10 +30,14 @@ LCDCR:		equ	LCDCW+1         ; LCD control register read
 LCDDW:		equ	LCDCW+2         ; LCD data register write
 LCDDR:		equ	LCDCW+3         ; LCD data register read
 
-; LCD commands to set cursor position
+; LCD cursor position commands
 ;
-LCDROW1:        equ     80h             ; first row, leftmost column
-LCDROW2:        equ     80h|40h         ; second row, leftmost column
+LCDROW0:        equ     80h             ; first row, leftmost column
+LCDROW1:        equ     80h|40h         ; second row, leftmost column
+LCDPOSSTAT:     equ     LCDROW0+0       ; status (radio antenna symbol)
+LCDPOSTIME:     equ     LCDROW0+2       ; time (hh:mm:ss)
+LCDPOSZONE:     equ     LCDROW0+12      ; time zone abbreviation
+LCDPOSDATE:     equ     LCDROW1+0       ; date string
 
 ; Date/time structure offsets
 ;

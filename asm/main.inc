@@ -63,7 +63,7 @@ main:           call    .updatedisplay
 ; Output : -
 ; Scratch: af, c
 ;
-.showbitstatus: ld      c, LCDROW1              ; cursor home
+.showbitstatus: ld      c, LCDPOSSTAT           ; set cursor
                 call    writelcdctrl
                 ld      c, b
                 jp      writelcddata
@@ -73,11 +73,11 @@ main:           call    .updatedisplay
 ; Output : -
 ; Scratch: af, bc, de, hl
 ;
-.updatedisplay: ld      c, LCDROW1+2            ; move cursor to column 2
+.updatedisplay: ld      c, LCDPOSTIME           ; set cursor
                 call    writelcdctrl
 
                 ld      a, (DT_HOUR)            ; time in hh:mm:ss format
-                call    writelcdbcd
+                call    writelcdbcdslz
                 ld      c, ':'
                 call    writelcddata
                 ld      a, (DT_MIN)
@@ -91,14 +91,14 @@ main:           call    .updatedisplay
                 and     a
                 ret     z                       ; don't display invalid date
 
-                ld      c, LCDROW1+12           ; move cursor to column 12
+                ld      c, LCDPOSZONE           ; set cursor
                 call    writelcdctrl
 
                 ld      a, (DT_TIMEZONE)
                 ld      hl, tznames
                 call    writelcdtable4          ; name of time zone
 
-                ld      c, LCDROW2+0            ; move cursor to second row
+                ld      c, LCDPOSDATE           ; set cursor
                 call    writelcdctrl
 
                 ld      a, (DT_WEEKDAY)
@@ -108,7 +108,7 @@ main:           call    .updatedisplay
                 ld      c, ' '
                 call    writelcddata
                 ld      a, (DT_DAY)
-                call    writelcdbcd             ; day of month number
+                call    writelcdbcdslz          ; day of month number
 
                 ld      a, (DT_MONTH)
                 ld      hl, monthnames-4
