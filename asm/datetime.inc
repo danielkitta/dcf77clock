@@ -125,3 +125,43 @@ incdatetimemin: ld      de, 0059h
 .incwrap:       ld      a, d                    ; wrap around to lower bound
                 scf
                 ret
+
+; Calculate the century from date with 2-digit year and given day of week.
+; Input  : iy
+; Output : a, cy
+; Scratch: af, bc, de, hl
+;
+calccentury:    ld      a, (iy+I_MONTH)
+                ld      b, 0
+                ld      c, a                    ; remember month
+                cp      03h                     ; month is March or later?
+                ld      a, (iy+I_YEAR)
+                sbc     a, b                    ; no: decrement year
+                daa
+                ld      d, b                    ; d=0
+                ld      e, a
+                ld      hl, weekdeltayear
+                add     hl, de
+                ld      a, (hl)                 ; get year's day of week delta
+                ld      hl, weekdeltamonth-1
+                add     hl, bc
+                add     a, (hl)                 ; add month's day of week delta
+                ld      c, (iy+I_DAY)
+                ld      hl, weekdeltaday-1
+                add     hl, bc
+                add     a, (hl)                 ; add day's day of week delta
+                add     a, 7                    ; add bias to keep delta >= 0
+                sub     (iy+I_WEEKDAY)          ; calc day of week difference
+                ld      c, a
+                ld      hl, centfromwdelta
+                add     hl, bc
+                ld      a, (iy+I_MONTH)
+                cp      03h                     ; month is March or later?
+                ld      a, e
+                adc     a, b                    ; no: increment year
+                daa
+                ld      a, (hl)                 ; look up century
+                adc     a, b                    ; apply correction if needed
+                daa
+                cp      19h                     ; cy=1 if century invalid
+                ret

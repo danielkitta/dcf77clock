@@ -116,7 +116,16 @@ main:           call    .updatedisplay
 
                 ld      c, ' '
                 call    writelcddata
-                ld      a, 20h
-                call    writelcdbcd             ; century (fixed)
+                ld      iy, DATETIME
+                call    calccentury
+                jr      c, .nocentury
+
+                call    writelcdbcd             ; 2-digit century
+                ld      a, (DT_YEAR)
+                jp      writelcdbcd             ; 2-digit year
+
+.nocentury:     ld      c, ' '                  ; blank century
+                call    writelcddata
+                call    writelcddata
                 ld      a, (DT_YEAR)
                 jp      writelcdbcd             ; 2-digit year
