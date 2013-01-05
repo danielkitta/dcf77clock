@@ -55,7 +55,7 @@ dcfdecode:      ld      (iy+I_VALID), 0         ; reset valid flag
                 ret     c
                 ld      (iy+I_YEAR), a
                 and     0Fh                     ; isolate lower digit
-                add     a, ~09h                 ; range 0..9?
+                add     a, -10                  ; range 0..9?
                 ret     c
 
                 ld      b, 5
@@ -68,7 +68,7 @@ dcfdecode:      ld      (iy+I_VALID), 0         ; reset valid flag
                 ret     c
                 ld      (iy+I_MONTH), a
                 and     0Fh                     ; isolate lower digit
-                add     a, ~09h                 ; range 0..9?
+                add     a, -10                  ; range 0..9?
                 ret     c
 
                 ld      b, 3
@@ -76,7 +76,7 @@ dcfdecode:      ld      (iy+I_VALID), 0         ; reset valid flag
                 rl      e                       ; store parity
                 ld      (iy+I_WEEKDAY), a
                 dec     a
-                add     a, ~06h                 ; range 1..7?
+                add     a, -7                   ; range 1..7?
                 ret     c
 
                 ld      b, 6
@@ -85,11 +85,11 @@ dcfdecode:      ld      (iy+I_VALID), 0         ; reset valid flag
                 jp      po, .reterror           ; odd parity: error
                 cp      1                       ; day >= 1?
                 ret     c
-                cp      31h+1                   ; day <= 12?
+                cp      31h+1                   ; day <= 31?
                 jr      nc, .reterror
                 ld      (iy+I_DAY), a
                 and     0Fh                     ; isolate lower digit
-                add     a, ~09h                 ; range 0..9?
+                add     a, -10                  ; range 0..9?
                 ret     c
 
                 ld      b, 7
@@ -100,7 +100,7 @@ dcfdecode:      ld      (iy+I_VALID), 0         ; reset valid flag
                 jr      nc, .reterror
                 ld      (iy+I_HOUR), a
                 and     0Fh                     ; isolate lower digit
-                add     a, ~09h                 ; range 0..9?
+                add     a, -10                  ; range 0..9?
                 ret     c
 
                 ld      b, 8
@@ -111,20 +111,20 @@ dcfdecode:      ld      (iy+I_VALID), 0         ; reset valid flag
                 jr      nc, .reterror
                 ld      e, a                    ; remember minute
                 and     0Fh                     ; isolate lower digit
-                add     a, ~09h                 ; range 0..9?
+                add     a, -10                  ; range 0..9?
                 ret     c
 
                 ld      (iy+I_MIN), e
                 xor     a
                 cp      e                       ; cy=1 if minute > 0
-                sbc     a, a                    ; a=-cy, cy unchanged
+                sbc     a, a                    ; a=-cy
                 ld      c, a                    ; remember mask
 
                 ld      a, (DCFBITS+19)         ; read leap second announcement
                 ld      e, a                    ; remember flag
                 add     a, c                    ; a=1 if leap=1 and minute=0
                 dec     a                       ; a=1?
-                jr      nz, .skipleapbit
+                jr      nz, .skipleapbit        ; no: skip bit 59
 
                 ld      a, (DCFBITS+59)         ; read leap second fill bit
                 dec     d                       ; eat extra bit from count
