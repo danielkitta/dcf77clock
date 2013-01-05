@@ -25,10 +25,10 @@ CTC3:           equ     CTC0+3          ; CTC channel 3
 
 ; LCD module I/O port address range
 ;
-LCDCW:		equ	20h             ; LCD control register write
-LCDCR:		equ	LCDCW+1         ; LCD control register read
-LCDDW:		equ	LCDCW+2         ; LCD data register write
-LCDDR:		equ	LCDCW+3         ; LCD data register read
+LCDCW:          equ     20h             ; LCD control register write
+LCDCR:          equ     LCDCW+1         ; LCD control register read
+LCDDW:          equ     LCDCW+2         ; LCD data register write
+LCDDR:          equ     LCDCW+3         ; LCD data register read
 
 ; LCD cursor position commands
 ;
