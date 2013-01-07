@@ -72,7 +72,8 @@ incdatetimemin: ld      de, 0059h
                 jr      nz, .skipleapday        ; no: skip
 
                 cp      (iy+I_DAY)              ; 28th?
-                jr      nz, .skipleapday        ; no: skip
+                jr      c, .leapday             ; after 28th: must be 29th now
+                jr      nz, .skipleapday        ; before 28th: skip
 
                 ld      a, (iy+I_YEAR)
                 ld      c, a                    ; remember year
@@ -104,13 +105,18 @@ incdatetimemin: ld      de, 0059h
                 ld      (iy+I_MONTH), a
                 ret     nc
 
-                ld      de, 0099h
                 ld      a, (iy+I_YEAR)
-                call    .incbcd                 ; increment year
+                add     a, b                    ; increment year
+                daa
                 ld      (iy+I_YEAR), a
                 ret
 
 ; Increment value stored as two packed BCD digits.
+; If the BCD value a is equal to or exceeds the upper boundary e,
+; the value is reset to a-e+d, where d is the lower boundary.
+; Otherwise, a is incremented by the step b.  Both the lower boundary
+; d and the wrap-around overshoot a-e are assumed to be small enough
+; to not need BCD adjustment.
 ; Input  : a, b, de
 ; Output : a, cy
 ; Scratch: f
@@ -122,7 +128,8 @@ incdatetimemin: ld      de, 0059h
                 daa
                 ret
 
-.incwrap:       ld      a, d                    ; wrap around to lower bound
+.incwrap:       sub     e                       ; wrap but keep overshoot
+                add     a, d                    ; offset by lower bound
                 scf
                 ret
 
