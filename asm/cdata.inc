@@ -155,8 +155,8 @@ lcdcgdata:      defb    00000b          ; radio antenna off
                 defb    00100b
                 defb    00100b
                 defb    00100b
-                defb    01110b
-                defb    01110b
+                defb    00100b
+                defb    01010b
                 defb    00000b
 
                 defb    10001b          ; radio antenna distortion
@@ -164,8 +164,8 @@ lcdcgdata:      defb    00000b          ; radio antenna off
                 defb    10101b
                 defb    00100b
                 defb    00100b
-                defb    01110b
-                defb    01110b
+                defb    00100b
+                defb    01010b
                 defb    00000b
 
                 defb    01100b          ; radio antenna left wave
@@ -173,8 +173,8 @@ lcdcgdata:      defb    00000b          ; radio antenna off
                 defb    10100b
                 defb    00100b
                 defb    00100b
-                defb    01110b
-                defb    01110b
+                defb    00100b
+                defb    01010b
                 defb    00000b
 
                 defb    00110b          ; radio antenna right wave
@@ -182,8 +182,8 @@ lcdcgdata:      defb    00000b          ; radio antenna off
                 defb    00101b
                 defb    00100b
                 defb    00100b
-                defb    01110b
-                defb    01110b
+                defb    00100b
+                defb    01010b
                 defb    00000b
 
 LCDCGDATALEN:   equ     $-lcdcgdata
