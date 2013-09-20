@@ -45,7 +45,7 @@ resetlcd:       ld      a, .LCD_8BIT            ; dummy 2nd nibble of possibly
 ;
 writelcdtable4: add     a, a                    ; quadruple index
                 add     a, a
-                ld      b, 0
+                ld      b, 0                    ; no carry: max index 63
                 ld      c, a
                 add     hl, bc                  ; add to base address
                 ld      b, 4                    ; string length 4
