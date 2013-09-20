@@ -9,6 +9,6 @@ include "decode.inc"
 include "datetime.inc"
 include "cdata.inc"
 
-                defs    ROMSIZE-$, 0FFh         ; fill up ROM image
+                defs    ROMSTART+ROMSIZE-$, 0FFh        ; fill up ROM image
 
                 end
